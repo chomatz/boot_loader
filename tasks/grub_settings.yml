@@ -6,7 +6,7 @@
     regexp: '^.*{{ item.key }}='
     line: "{{ item.key }}={{ item.value }}"
     state: present
-  loop: "{{ grub_setting }}"
+  loop: "{{ grub_settings }}"
   when: grub_task == "configure"
   notify: rebuild grub
 
@@ -15,7 +15,7 @@
     path: "{{ grub_file }}"
     regexp: '^.*{{ item.key }}='
     state: absent
-  loop: "{{ grub_setting }}"
+  loop: "{{ grub_settings }}"
   when: grub_task == "remove"
   notify: rebuild grub
 
