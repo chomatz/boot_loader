@@ -8,11 +8,11 @@ ansible role for bootloader management
 - grub_file: /etc/default/grub
   - global grub settings
 - grub_task: configure
-  - use *configure* to add or modify settings
-  - use *remove* to remove settings
+  - use **configure** to add or modify settings
+  - use **remove** to remove settings
 - grubby_task: configure
-  - use *configure* to add or modify settings
-  - use *remove* to remove settings
+  - use **configure** to add or modify settings
+  - use **remove** to remove settings
 
 ## dependencies
 
