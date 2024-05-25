@@ -18,7 +18,6 @@ ansible role for bootloader management
 
 ## examples
 ```
-
 - name: display grub menu
   ansible.builtin.include_role:
     name: boot_loader
@@ -32,7 +31,8 @@ ansible role for bootloader management
         value: menu
       - key: GRUB_TIMEOUT
         value: 5
-
+```
+```
 - name: remove default kernel arguments
   ansible.builtin.include_role:
     name: boot_loader
@@ -43,5 +43,4 @@ ansible role for bootloader management
       - crashkernel
       - quiet
       - rhgb
-
 ```
