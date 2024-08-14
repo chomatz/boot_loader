@@ -1,37 +1,44 @@
 ---
 
-- name: configure kernel arguments
+- name: ensure tasks run only on selected os releases
   block:
 
     - name: configure kernel arguments
-      ansible.builtin.command:
-        cmd: "grubby --update-kernel=ALL --args='{{ item }}'"
-      notify: rebuild grub
-      register: grubby_kernel_arguments
-      loop: "{{ kernel_arguments }}"
+      block:
 
-    - name: display grubby result
-      ansible.builtin.debug:
-        var: grubby_kernel_arguments
-        verbosity: 1
+        - name: configure kernel arguments
+          ansible.builtin.command:
+            cmd: "grubby --update-kernel=ALL --args='{{ item }}'"
+          notify: rebuild grub
+          register: grubby_kernel_arguments
+          loop: "{{ kernel_arguments }}"
 
-  when: grubby_task == "configure"
+        - name: display grubby result
+          ansible.builtin.debug:
+            var: grubby_kernel_arguments
+            verbosity: 1
 
-- name: remove kernel arguments
-  block:
+      when: grubby_task == "configure"
 
     - name: remove kernel arguments
-      ansible.builtin.command:
-        cmd: "grubby --update-kernel=ALL --remove-args='{{ item }}'"
-      notify: rebuild grub
-      register: grubby_kernel_arguments
-      loop: "{{ kernel_arguments }}"
+      block:
 
-    - name: display grubby result
-      ansible.builtin.debug:
-        var: grubby_kernel_arguments
-        verbosity: 1
+        - name: remove kernel arguments
+          ansible.builtin.command:
+            cmd: "grubby --update-kernel=ALL --remove-args='{{ item }}'"
+          notify: rebuild grub
+          register: grubby_kernel_arguments
+          loop: "{{ kernel_arguments }}"
 
-  when: grubby_task == "remove"
+        - name: display grubby result
+          ansible.builtin.debug:
+            var: grubby_kernel_arguments
+            verbosity: 1
+
+      when: grubby_task == "remove"
+
+  when: >
+    ansible_distribution == "Fedora" or
+    ansible_distribution == "Rocky"
 
 ...

@@ -1,22 +1,29 @@
 ---
 
-- name: configure grub settings
-  ansible.builtin.lineinfile:
-    path: "{{ grub_file }}"
-    regexp: '^.*{{ item.key }}='
-    line: "{{ item.key }}={{ item.value }}"
-    state: present
-  loop: "{{ grub_settings }}"
-  when: grub_task == "configure"
-  notify: rebuild grub
+- name: ensure tasks run only on selected os releases
+  block:
 
-- name: remove grub settings
-  ansible.builtin.lineinfile:
-    path: "{{ grub_file }}"
-    regexp: '^.*{{ item.key }}='
-    state: absent
-  loop: "{{ grub_settings }}"
-  when: grub_task == "remove"
-  notify: rebuild grub
+    - name: configure grub settings
+      ansible.builtin.lineinfile:
+        path: "{{ grub_file }}"
+        regexp: '^.*{{ item.key }}='
+        line: "{{ item.key }}={{ item.value }}"
+        state: present
+      loop: "{{ grub_settings }}"
+      when: grub_task == "configure"
+      notify: rebuild grub
+
+    - name: remove grub settings
+      ansible.builtin.lineinfile:
+        path: "{{ grub_file }}"
+        regexp: '^.*{{ item.key }}='
+        state: absent
+      loop: "{{ grub_settings }}"
+      when: grub_task == "remove"
+      notify: rebuild grub
+
+  when: >
+    ansible_distribution == "Fedora" or
+    ansible_distribution == "Rocky"
 
 ...
