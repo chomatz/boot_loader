@@ -11,7 +11,9 @@
         state: present
       loop: "{{ grub_settings }}"
       when: grub_task == "configure"
-      notify: rebuild grub
+      notify:
+        - rebuild grub 001
+        - rebuild grub 002
 
     - name: remove grub settings
       ansible.builtin.lineinfile:
@@ -20,7 +22,9 @@
         state: absent
       loop: "{{ grub_settings }}"
       when: grub_task == "remove"
-      notify: rebuild grub
+      notify:
+        - rebuild grub 001
+        - rebuild grub 002
 
   when: >
     ansible_distribution == "Fedora" or

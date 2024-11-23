@@ -9,7 +9,9 @@
         - name: configure kernel arguments
           ansible.builtin.command:
             cmd: "grubby --update-kernel=ALL --args='{{ item }}'"
-          notify: rebuild grub
+          notify:
+            - rebuild grub 001
+            - rebuild grub 002
           register: grubby_kernel_arguments
           loop: "{{ kernel_arguments }}"
 
@@ -26,7 +28,9 @@
         - name: remove kernel arguments
           ansible.builtin.command:
             cmd: "grubby --update-kernel=ALL --remove-args='{{ item }}'"
-          notify: rebuild grub
+          notify:
+            - rebuild grub 001
+            - rebuild grub 002
           register: grubby_kernel_arguments
           loop: "{{ kernel_arguments }}"
 
