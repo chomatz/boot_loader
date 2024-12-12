@@ -5,7 +5,7 @@
     cmd: "grub2-mkconfig -o /boot/efi/EFI/{{ ansible_distribution | lower }}/grub.cfg"
   when:
     - ansible_distribution == "Fedora"
-    - ansible_distribution_major_version < "41"
+    - ansible_distribution_major_version <= "40"
 
 - name: rebuild grub 002
   ansible.builtin.command:
