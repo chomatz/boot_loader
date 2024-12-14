@@ -10,6 +10,8 @@
         line: "{{ item.key }}={{ item.value }}"
         state: present
       loop: "{{ grub_settings }}"
+      loop_control:
+        label: "{{ item.key }}"
       when: grub_task == "configure"
       notify:
         - rebuild grub 001
@@ -21,6 +23,8 @@
         regexp: '^.*{{ item.key }}='
         state: absent
       loop: "{{ grub_settings }}"
+      loop_control:
+        label: "{{ item.key }}"
       when: grub_task == "remove"
       notify:
         - rebuild grub 001
