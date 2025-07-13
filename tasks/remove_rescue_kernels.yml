@@ -1,0 +1,23 @@
+---
+
+- name: ensure tasks run only on selected os releases
+  block:
+
+    - name: remove rescue kernel generator
+      ansible.builtin.package:
+        name: dracut-config-rescue
+        state: absent
+
+    - name: remove rescue kernel(s)
+      ansible.builtin.shell:
+        cmd: "rm -f /boot/vmlinuz-0-rescue* /boot/initramfs-0-rescue*"
+      notify:
+        - rebuild grub 001
+        - rebuild grub 002
+
+  when: >
+    ansible_distribution == "Fedora" or
+    ansible_distribution == "RedHat" or
+    ansible_distribution == "Rocky"
+
+...
