@@ -6,38 +6,76 @@
     - name: configure kernel arguments
       block:
 
-        - name: configure kernel arguments
-          ansible.builtin.command:
-            cmd: "grubby --update-kernel=ALL --args='{{ item }}'"
-          notify:
-            - rebuild grub 001
-            - rebuild grub 002
-          register: grubby_kernel_arguments
-          loop: "{{ kernel_arguments }}"
+        - name: for non-bazzite
+          block:
 
-        - name: display grubby result
-          ansible.builtin.debug:
-            var: grubby_kernel_arguments
-            verbosity: 1
+            - name: configure kernel arguments
+              ansible.builtin.command:
+                cmd: "grubby --update-kernel=ALL --args='{{ item }}'"
+              notify:
+                - rebuild grub 001
+                - rebuild grub 002
+              register: grubby_kernel_arguments
+              loop: "{{ kernel_arguments }}"
+
+            - name: display grubby result
+              ansible.builtin.debug:
+                var: grubby_kernel_arguments
+                verbosity: 1
+
+          when: os_id.stdout != "bazzite"
+
+        - name: for bazzite
+          block:
+
+            - name: configure kernel arguments
+              ansible.builtin.command:
+                cmd: "rpm-ostree kargs --append-if-missing='{{ item }}'"
+              notify:
+                - rebuild grub 001
+                - rebuild grub 002
+              register: grubby_kernel_arguments
+              loop: "{{ kernel_arguments }}"
+
+          when: os_id.stdout == "bazzite"
 
       when: grubby_task == "configure"
 
     - name: remove kernel arguments
       block:
 
-        - name: remove kernel arguments
-          ansible.builtin.command:
-            cmd: "grubby --update-kernel=ALL --remove-args='{{ item }}'"
-          notify:
-            - rebuild grub 001
-            - rebuild grub 002
-          register: grubby_kernel_arguments
-          loop: "{{ kernel_arguments }}"
+        - name: for non-bazzite
+          block:
 
-        - name: display grubby result
-          ansible.builtin.debug:
-            var: grubby_kernel_arguments
-            verbosity: 1
+            - name: remove kernel arguments
+              ansible.builtin.command:
+                cmd: "grubby --update-kernel=ALL --remove-args='{{ item }}'"
+              notify:
+                - rebuild grub 001
+                - rebuild grub 002
+              register: grubby_kernel_arguments
+              loop: "{{ kernel_arguments }}"
+
+            - name: display grubby result
+              ansible.builtin.debug:
+                var: grubby_kernel_arguments
+                verbosity: 1
+
+          when: os_id.stdout != "bazzite"
+
+        - name: for bazzite
+          block:
+
+            - name: remove kernel arguments
+              ansible.builtin.command:
+                cmd: "rpm-ostree kargs --delete-if-present='{{ item }}'"
+              notify:
+                - rebuild grub 001
+                - rebuild grub 002
+              register: grubby_kernel_arguments
+              loop: "{{ kernel_arguments }}"
+
+          when: os_id.stdout == "bazzite"
 
       when: grubby_task == "remove"
 
