@@ -23,7 +23,7 @@
                 var: grubby_kernel_arguments
                 verbosity: 1
 
-          when: os_id.stdout != "bazzite"
+          when: ansible_distribution != "Bazzite"
 
         - name: for bazzite
           block:
@@ -37,7 +37,7 @@
               register: grubby_kernel_arguments
               loop: "{{ kernel_arguments }}"
 
-          when: os_id.stdout == "bazzite"
+          when: ansible_distribution == "Bazzite"
 
       when: grubby_task == "configure"
 
@@ -61,7 +61,7 @@
                 var: grubby_kernel_arguments
                 verbosity: 1
 
-          when: os_id.stdout != "bazzite"
+          when: ansible_distribution != "Bazzite"
 
         - name: for bazzite
           block:
@@ -75,11 +75,12 @@
               register: grubby_kernel_arguments
               loop: "{{ kernel_arguments }}"
 
-          when: os_id.stdout == "bazzite"
+          when: ansible_distribution == "Bazzite"
 
       when: grubby_task == "remove"
 
   when: >
+    ansible_distribution == "Bazzite" or
     ansible_distribution == "Fedora" or
     ansible_distribution == "RedHat" or
     ansible_distribution == "Rocky"
